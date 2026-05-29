@@ -3,7 +3,7 @@
 
 
 #include "student.h"
-#include "sqlite3.h"
+#include "sqlite/sqlite3.h"
 
 #include <unordered_map>
 #include <string>
@@ -21,6 +21,7 @@ class Database {
         Database();
         ~Database();
 
+        
         void loadCache();
         void createTable();
 

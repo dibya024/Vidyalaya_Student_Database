@@ -25,7 +25,7 @@ AuthManager::~AuthManager() {
 
 void AuthManager::connectDatabase() {
 
-    int exit = sqlite3_open("auth.db", &auth_db);        //SQLite returns 0(success) and non-zero(failure).
+    int exit = sqlite3_open("data/auth.db", &auth_db);        //SQLite returns 0(success) and non-zero(failure).
 
     if(exit) {
         cout << "Auth Database Connection Failed!\n";
@@ -68,7 +68,7 @@ void AuthManager::createStudentAuthTable() {
 
 void AuthManager::loadJsonUsers() {
 
-    ifstream file("users.json");
+    ifstream file("data/users.json");
 
     if(!file.is_open()) {
 

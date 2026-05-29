@@ -118,6 +118,8 @@ bool StudentManager :: addStudent() {
 
 void StudentManager :: viewStudents() {
 
+    cout << "View student called\n";
+
     db.viewStudents();
 }
 

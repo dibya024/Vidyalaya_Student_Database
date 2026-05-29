@@ -6,23 +6,23 @@
             "type": "shell",
             "command": "C:\\msys64\\ucrt64\\bin\\g++.exe",
             "args": [
-                "main.cpp",
-                "student.cpp",
-                "student_manager.cpp",
-                "database.cpp",
+                "src/main.cpp",
+                "src/student.cpp",
+                "src/student_manager.cpp",
+                "src/database.cpp",
+                "src/auth_manager.cpp",
+                "-Iinclude",
+                "-std=c++17",
                 "-x",
                 "c",
-                "sqlite3.c",
+                "include/sqlite/sqlite3.c",
                 "-o",
-                "main.exe"
+                "build/main.exe"
             ],
             "group": {
                 "kind": "build",
                 "isDefault": true
-            },
-            "problemMatcher": [
-                "$gcc"
-            ]
+            }
         }
     ]
 }

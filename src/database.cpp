@@ -1,5 +1,7 @@
 #include <iostream>
 #include "database.h"
+#include <iomanip>
+
 
 using namespace std;
 
@@ -7,7 +9,7 @@ Database :: Database() {
 
     cout << "Database constructor started\n";
     
-    int exit = sqlite3_open("student.db", &db);
+    int exit = sqlite3_open("data/student.db", &db);
 
     if (exit) {
         cout << "Database connection failed!\n";
@@ -128,14 +130,31 @@ void Database :: viewStudents() {
 
     string sql = "SELECT * FROM students;";
 
+    cout << left 
+         << setw(15) << "Roll No."
+         << setw(20) << "Name"
+         << setw(15) << "Branch"
+         << setw(8) << "Rank"
+         << setw(8) << "Age"
+         << setw(10) << "SGPA"
+         << setw(10) << "CGPA" << endl;
+
+    cout << string(86, '-') << endl;
+
     auto callback = [](void*, int argc, char** argv, char** colName) {
-        cout << "\n-------------------------------------\n";
 
-        for (int i= 0; i < argc; i++) {
-            cout << colName[i] << ": "
-                 << (argv[i] ? argv[i] : "NULL") << endl;
+        double sgpa= argv[5] ? stod(argv[5]) : 0.0;
+        double cgpa= argv[6] ? stod(argv[6]) : 0.0;
 
-        }
+        cout << left
+            << setw(15) << (argv[0] ? argv[0] : "NULL")
+            << setw(20) << (argv[1] ? argv[1] : "NULL")
+            << setw(15) << (argv[2] ? argv[2] : "NULL")
+            << setw(8)  << (argv[3] ? argv[3] : "NULL")
+            << setw(8)  << (argv[4] ? argv[4] : "NULL")
+            << setw(10) << fixed << setprecision(2) << sgpa
+            << setw(10) << fixed << setprecision(2) << cgpa
+            << endl;
 
         return 0;
     };
