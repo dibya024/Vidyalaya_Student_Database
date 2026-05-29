@@ -1,0 +1,2 @@
+include/sqlite/* linguist-vendored
+include/nlohmann/* linguist-vendored
