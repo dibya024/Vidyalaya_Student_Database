@@ -25,6 +25,8 @@ class StudentManager {
         void searchStudent();
         void deleteStudent();
         void updateStudent();
+
+        void showStatistics();
         
 };
 

@@ -46,7 +46,7 @@ bool StudentManager :: addStudent() {
     cin.ignore(1000, '\n');
 
     cout << "Enter Name :";
-    getline(cin, name);
+    getline(cin >> ws, name);
 
     cout << "Enter roll_no : ";
     cin >> roll_no;
@@ -54,7 +54,8 @@ bool StudentManager :: addStudent() {
     cin.ignore(1000, '\n');
 
     cout << "Enter Branch/Specialization : ";
-    getline(cin, branch);
+    getline(cin >> ws, branch);
+    cout << "DEBUG Branch = [" << branch << "]\n";
 
     cout << "Enter class rank :";
     cin >> rank;
@@ -89,6 +90,15 @@ bool StudentManager :: addStudent() {
         cout << "Invalid CGPA!\n";
         return false;
     }
+
+    cout << "\nDEBUG DATA\n";
+    cout << "Name   : " << name << endl;
+    cout << "Roll   : " << roll_no << endl;
+    cout << "Branch : " << branch << endl;
+    cout << "Rank   : " << rank << endl;
+    cout << "Age    : " << age << endl;
+    cout << "SGPA   : " << sgpa << endl;
+    cout << "CGPA   : " << cgpa << endl;
 
     Student s(name, roll_no, branch, rank, age, sgpa, cgpa);
 
@@ -126,39 +136,26 @@ void StudentManager :: viewStudents() {
 
 
 
+void StudentManager :: showStatistics() {
+
+    cout << "Show Statistics called.\n";
+
+    db.showStatistics();
+}
+
+
+
+
 void StudentManager :: deleteStudent() {
     
-    string sroll, sname;
-    int option;
+    string sroll;
 
-    cout << "1. Delete by name\n";
-    cout << "2.Delete by roll_no\n";
+    cout << "Enter the roll_no you want to delete : ";
+    cin >> sroll;
 
-    cout << "Enter an option : ";
-    cin >> option;
+    auth.deleteStudentAuthByRoll(sroll);
+    db.deleteByRoll(sroll);
 
-
-    if (option == 1) {
-
-        cin.ignore(1000, '\n');
-        cout << "Enter the name of student you want to delete : ";
-        getline(cin, sname);
-
-        db.deleteByName(sname);
-    }
-
-    else if (option == 2) {
-
-        cout << "Enter the roll_no you want to delete : ";
-        cin >> sroll;
-
-        db.deleteByRoll(sroll);
-    }
-
-    else{
-        cout << "Invalid option\n";
-        return;
-    }
 
 
 }

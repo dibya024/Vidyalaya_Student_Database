@@ -107,6 +107,10 @@ void AuthManager::loadStudentCache() {
 
         string roll = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
 
+        cout << "DEBUG AUTH RECORD: "
+            << username << " | "
+            << roll << endl;
+
         studentPasswordCache[username] = password;
         rollCache[username] = roll;
         usedRolls.insert(roll);
@@ -168,6 +172,11 @@ string AuthManager::login(string username, string password) {
 
 
 bool AuthManager::registerStudent(string username, string password, string roll) {
+
+    cout << "Trying to register roll: " << roll << endl;
+    cout << "usedRolls count = "
+        << usedRolls.count(roll)
+        << endl;
 
     if (usedRolls.count(roll)) {
 
@@ -250,4 +259,28 @@ string AuthManager :: hashPassword (string password) {
     }
 
     return to_string(hash);
+}
+
+
+
+
+
+bool AuthManager :: deleteStudentAuthByRoll(string roll) {
+
+    string sql= "DELETE FROM students_auth WHERE roll = ?;";
+    sqlite3_stmt* stmt;
+
+    sqlite3_prepare_v2(auth_db, sql.c_str(), -1, &stmt, nullptr);
+    sqlite3_bind_text(stmt, 1, roll.c_str(), -1, SQLITE_STATIC);
+
+    int step= sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+
+    if(step != SQLITE_DONE) {
+        return false;
+    }
+
+    loadStudentCache();
+
+    return true;
 }

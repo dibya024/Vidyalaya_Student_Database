@@ -39,6 +39,8 @@ class AuthManager {
 
         std::string hashPassword(std::string password);
 
+        bool deleteStudentAuthByRoll(std::string roll);
+
 };
 
 

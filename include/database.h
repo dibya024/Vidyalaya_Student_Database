@@ -31,12 +31,13 @@ class Database {
         void searchByName(std::string name);
         void searchByRoll(std::string roll);
 
-        void deleteByName(std::string name);
         void deleteByRoll(std::string roll);
 
         void selectStudent(std::string roll_no);
 
         void updateStudent(std::string roll_no, std::string column, std::string value);
+
+        void showStatistics();
 
 };
 

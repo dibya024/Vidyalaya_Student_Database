@@ -56,10 +56,6 @@ void Database :: createTable(){
         cout << "Table created sucessfully!\n";
     }
 
-    // string rollIndex= "CREATE INDEX IF NOT EXISTS idx_roll "
-    //                   "ON students(roll_no);";
-    
-    // sqlite3_exec(db, rollIndex.c_str(), NULL, NULL, &errMsg);
 
     string nameIndex= "CREATE INDEX IF NOT EXISTS idx_name "
                       "ON students(name);";
@@ -76,16 +72,6 @@ bool Database :: addStudent(const Student& s) {
 
     string sql = "INSERT INTO students "
                  "(roll_no, name, branch, rank, age, sgpa, cgpa) VALUES (?, ?, ?, ?, ?, ?, ?);";
-
-                //  s.getRoll() + "', '" +
-                //  s.getName() + "', '" +
-                //  s.getBranch() + "', " +
-
-                //  to_string(s.getRank()) + ", " +
-                //  to_string(s.getAge()) + ", " +
-                //  to_string(s.getSgpa()) + ", " +
-                //  to_string(s.getCgpa()) +
-                //  ");";
 
     sqlite3_stmt* stmt;
 
@@ -267,41 +253,6 @@ void Database :: searchByRoll(string roll) {
 
 
 
-void Database::deleteByName(string name) {
-
-    string sql = "DELETE FROM students WHERE name = ?;";
-
-    sqlite3_stmt* stmt;
-    int prepare =sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
-
-    if(prepare != SQLITE_OK) {
-
-        cout << "SQL Prepare Failed!\n";
-        return;
-    }
-
-    sqlite3_bind_text(stmt, 1, name.c_str(), -1, SQLITE_STATIC);
-
-    int step = sqlite3_step(stmt);
-    sqlite3_finalize(stmt);
-
-    if(step != SQLITE_DONE) {
-
-        cout << "Deletion failed!\n";
-        return;
-    }
-
-    if(sqlite3_changes(db) > 0) {
-
-        loadCache();
-        cout << "Student deleted successfully!\n";
-    }
-
-    else {
-        cout << "Student not found!\n";
-    }
-}
-
 
 
 
@@ -460,4 +411,63 @@ void Database :: loadCache() {
     sqlite3_finalize(stmt);
     cout << "Student cache loaded successfully!\n";
 
+}
+
+
+
+
+void Database :: showStatistics() {
+    
+    sqlite3_stmt* stmt;
+    cout << "\n==========DATABASE STATISTICS==========\n";
+
+    string sql= "SELECT COUNT(*) FROM students;";
+
+    if(sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            int totalStudents= sqlite3_column_int(stmt, 0);
+            cout << "Total Students : "<< totalStudents << endl;
+        }
+    }
+    sqlite3_finalize(stmt);
+
+    sql= "SELECT AVG(cgpa) FROM students;";
+
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+
+            double avgCG= sqlite3_column_double(stmt, 0);
+            cout << fixed << setprecision(2);
+            cout << "Avrage CGPA : "<< avgCG << endl;
+        }
+    }
+    sqlite3_finalize(stmt);
+
+    sql= "SELECT MAX(cgpa) FROM students;";
+
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+
+            double maxCG= sqlite3_column_double(stmt, 0);
+            cout << fixed << setprecision(2);
+            cout << "Maximum CGPA : "<< maxCG << endl;
+        }
+    }
+    sqlite3_finalize(stmt);
+
+    sql= "SELECT MIN(cgpa) FROM students;";
+
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+
+            double minCG= sqlite3_column_double(stmt, 0);
+            cout << fixed << setprecision(2);
+            cout << "Minimum CGPA : "<< minCG << endl;
+        }
+    }
+    sqlite3_finalize(stmt);
 }

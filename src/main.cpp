@@ -134,7 +134,8 @@ int main() {
                 cout << "3. Search Student\n";
                 cout << "4. Delete Student\n";
                 cout << "5. Update Student\n";
-                cout << "6. LogOut\n";
+                cout << "6. Show Statistics\n";
+                cout << "7. LogOut\n";
 
         
                 cout << "Enter the choice number : ";
@@ -170,6 +171,10 @@ int main() {
                         break;
 
                     case 6:
+                        manager.showStatistics();
+                        break;
+
+                    case 7:
                         cout << "\n...Thank You...\n";
                         loggedIn = false;
                         break;
