@@ -91,15 +91,6 @@ bool StudentManager :: addStudent() {
         return false;
     }
 
-    cout << "\nDEBUG DATA\n";
-    cout << "Name   : " << name << endl;
-    cout << "Roll   : " << roll_no << endl;
-    cout << "Branch : " << branch << endl;
-    cout << "Rank   : " << rank << endl;
-    cout << "Age    : " << age << endl;
-    cout << "SGPA   : " << sgpa << endl;
-    cout << "CGPA   : " << cgpa << endl;
-
     Student s(name, roll_no, branch, rank, age, sgpa, cgpa);
 
     bool authSuccess = auth.registerStudent(username, password, roll_no);

@@ -107,10 +107,6 @@ void AuthManager::loadStudentCache() {
 
         string roll = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
 
-        cout << "DEBUG AUTH RECORD: "
-            << username << " | "
-            << roll << endl;
-
         studentPasswordCache[username] = password;
         rollCache[username] = roll;
         usedRolls.insert(roll);
@@ -172,11 +168,6 @@ string AuthManager::login(string username, string password) {
 
 
 bool AuthManager::registerStudent(string username, string password, string roll) {
-
-    cout << "Trying to register roll: " << roll << endl;
-    cout << "usedRolls count = "
-        << usedRolls.count(roll)
-        << endl;
 
     if (usedRolls.count(roll)) {
 
@@ -240,9 +231,6 @@ string AuthManager::getStudentRoll(string username) {
 
 
 string AuthManager :: hashPassword (string password) {
-
-    // hash<string> hasher;
-    // return to_string(hasher(password));
 
     const unsigned long long p = 31;
     const unsigned long long MOD = 1e9 + 7;
