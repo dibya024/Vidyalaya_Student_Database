@@ -41,6 +41,12 @@ class AuthManager {
 
         bool deleteStudentAuthByRoll(std::string roll);
 
+        bool verifyCredentials(std::string roll, std::string username, std::string password);
+
+        bool changeUsername(std::string roll, std::string newUsername);
+        bool changePassword(std::string roll, std::string newPassword);
+
+
 };
 
 

@@ -39,6 +39,9 @@ class Database {
 
         void showStatistics();
 
+        int getBranchRank(std::string roll);
+        int getOverallRank(std::string roll);
+
 };
 
 #endif

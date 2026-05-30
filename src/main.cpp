@@ -49,8 +49,11 @@ int main() {
 
             if (role == "student") {
 
-                cout << "1.View my profile\n";
-                cout << "2.LogOut\n";
+                cout << "1. View my profile\n";
+                cout << "2. Change Username\n";
+                cout << "3. Change Password\n";
+                cout << "4. View Result\n";
+                cout << "5. LogOut\n";
 
                 cout << "Enter a choice here : ";
             
@@ -63,16 +66,41 @@ int main() {
 
                     continue;
                 }
+                string currRoll = auth.getStudentRoll(username);
 
                 switch (choice) {
 
                     case 1: {
-                        string currRoll= auth.getStudentRoll(username);
                         manager.viewMyData(currRoll);
                         break;
                     }
 
-                    case 2: 
+                    case 2: {
+                        string currentRoll = auth.getStudentRoll(username);
+
+                        if (manager.changeUsername(currentRoll)) {
+                            loggedIn = false;
+                            cout << "\nUsername Changed Successfully. Please log in again\n";
+                        }
+                        break;
+                    }
+
+                    case 3: {
+                        string currentRoll = auth.getStudentRoll(username);
+
+                        if (manager.changePassword(currentRoll)) {
+                            loggedIn = false;
+                            cout << "\nPassword Changed Successfully. Please log in again\n";
+                        }
+                        break;
+                    }
+
+                    case 4: {
+                        manager.viewMyResult(currRoll);
+                        break;
+                    }
+
+                    case 5: 
                         loggedIn = false;
                         cout << "\n...Thank You...\n";
                         break;

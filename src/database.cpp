@@ -470,4 +470,98 @@ void Database :: showStatistics() {
         }
     }
     sqlite3_finalize(stmt);
+
+    cout << "\n---------------------Branchwise Distribution------------------------\n";
+
+    sql= "SELECT branch, COUNT(*) FROM students GROUP BY branch;";
+    // sqlite3_stmt* stmt;
+
+    if (sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr) == SQLITE_OK) {
+
+        while(sqlite3_step(stmt) == SQLITE_ROW) {
+            string branch= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+            int count= sqlite3_column_int(stmt, 1);
+
+            cout << left << setw(20) << branch << " : " << count << endl;
+        }
+    }
+    sqlite3_finalize(stmt);
+
+}
+
+
+
+
+int Database :: getOverallRank(string roll) {
+
+    double cgpa = 0;
+
+    string sql = "SELECT cgpa FROM students WHERE roll_no = ?;";
+
+    sqlite3_stmt* stmt;
+
+    sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+    sqlite3_bind_text(stmt, 1, roll.c_str(), -1, SQLITE_STATIC);
+
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        cgpa = sqlite3_column_double(stmt, 0);
+    }
+
+    sqlite3_finalize(stmt);
+
+    sql = "SELECT COUNT(*) + 1 FROM students WHERE cgpa > ?;";
+
+    sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+    sqlite3_bind_double(stmt, 1, cgpa);
+
+    int rank= 0;
+
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        rank = sqlite3_column_int(stmt, 0);
+    }
+
+    sqlite3_finalize(stmt);
+    return rank;
+
+}
+
+
+
+
+int Database :: getBranchRank(string roll) {
+
+    double cgpa = 0;
+    string branch;
+
+    string sql = "SELECT branch, cgpa FROM students WHERE roll_no = ?;";
+
+    sqlite3_stmt* stmt;
+
+    sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+    sqlite3_bind_text(stmt, 1, roll.c_str(), -1, SQLITE_STATIC);
+
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+
+        branch= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+        cgpa = sqlite3_column_double(stmt, 1);
+    }
+
+    sqlite3_finalize(stmt);
+
+    sql = "SELECT COUNT(*) + 1 FROM students WHERE branch = ? AND cgpa > ?;";
+
+    sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+
+    sqlite3_bind_text(stmt, 1, branch.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_double(stmt, 2, cgpa);
+
+    int rank= 0;
+
+    if (sqlite3_step(stmt) == SQLITE_ROW) {
+        rank = sqlite3_column_int(stmt, 0);
+    }
+
+    sqlite3_finalize(stmt);
+    return rank;
+    
 }

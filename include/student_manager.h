@@ -16,8 +16,6 @@ class StudentManager {
     public:
 
         StudentManager(AuthManager& auth);
-
-        void viewMyData(std::string roll);
         
         bool addStudent();
 
@@ -27,6 +25,12 @@ class StudentManager {
         void updateStudent();
 
         void showStatistics();
+
+        void viewMyData(std::string roll);
+        void viewMyResult(std::string roll);
+
+        bool changeUsername(std::string roll);
+        bool changePassword(std::string roll);
         
 };
 

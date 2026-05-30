@@ -272,3 +272,96 @@ bool AuthManager :: deleteStudentAuthByRoll(string roll) {
 
     return true;
 }
+
+
+
+
+
+bool AuthManager :: verifyCredentials(string roll, string username, string password) {
+
+    if (!studentPasswordCache.count(username)){
+        return false;
+    }
+
+    if (rollCache[username] != roll) {
+        return false;
+    }
+
+    string hashedPassword = hashPassword(password);
+    if (studentPasswordCache[username] != hashedPassword) {
+        return false;
+    }
+    
+    return true;
+}
+
+
+
+
+bool AuthManager :: changeUsername(string roll, string newUsername) {
+
+    if (studentPasswordCache.count(newUsername)) {
+        cout << "Username not available!\n";
+        return false;
+    }
+
+    string sql = "UPDATE students_auth SET username = ? WHERE roll = ?;";
+
+    sqlite3_stmt* stmt;
+
+    int prepare = sqlite3_prepare_v2(auth_db, sql.c_str(), -1, &stmt, nullptr);
+    if (prepare != SQLITE_OK) {
+        cout << "SQL prepare failed!\n";
+        return false;
+    }
+
+    sqlite3_bind_text(stmt, 1, newUsername.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, roll.c_str(), -1, SQLITE_STATIC);
+
+    int step= sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+
+    if (step != SQLITE_DONE) {
+        cout << "Username updatation failed!\n";
+        return false;
+    }
+
+    loadStudentCache();
+    cout << "Username updated successfully";
+
+    return true;
+}
+
+
+
+
+bool AuthManager :: changePassword(string roll, string newPassword) {
+
+    string hashedPassword = hashPassword(newPassword);
+
+    string sql = "UPDATE students_auth SET password = ? WHERE roll = ?;";
+
+    sqlite3_stmt* stmt;
+
+    int prepare = sqlite3_prepare_v2(auth_db, sql.c_str(), -1, &stmt, nullptr);
+    if (prepare != SQLITE_OK) {
+        cout << "SQL prepare failed!\n";
+        return false;
+    }
+
+    sqlite3_bind_text(stmt, 1, hashedPassword.c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, roll.c_str(), -1, SQLITE_STATIC);
+
+    int step= sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+
+    if (step != SQLITE_DONE) {
+        cout << "Password updatation failed!\n";
+        return false;
+    }
+
+    loadStudentCache();
+    cout << "Password updated successfully";
+
+    return true;
+}

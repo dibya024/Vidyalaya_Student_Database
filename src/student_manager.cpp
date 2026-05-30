@@ -127,14 +127,6 @@ void StudentManager :: viewStudents() {
 
 
 
-void StudentManager :: showStatistics() {
-
-    cout << "Show Statistics called.\n";
-
-    db.showStatistics();
-}
-
-
 
 
 void StudentManager :: deleteStudent() {
@@ -276,6 +268,107 @@ void StudentManager :: updateStudent() {
 }
 
 
+
+void StudentManager :: showStatistics() {
+
+    cout << "Show Statistics called.\n";
+
+    db.showStatistics();
+}
+
+
+
+
 void StudentManager :: viewMyData(string roll) {
+
     db.searchByRoll(roll);
+    
+}
+
+
+
+void StudentManager :: viewMyResult(string roll){
+
+    cout << "\n========== RESULT ==========\n";
+
+    cout << "Branch Rank  : " << db.getBranchRank(roll) << endl;
+    cout << "Overall Rank : " << db.getOverallRank(roll) << endl; 
+    
+    cout << "============================\n";
+
+}
+
+
+
+
+bool StudentManager :: changeUsername(string roll) {
+
+    string currUsername;
+    string currPassword;
+
+    cout << "Enter current username : ";
+    cin >> currUsername;
+
+    cout << "Enter current password : ";
+    cin >> currPassword;
+
+    if (!auth.verifyCredentials(roll, currUsername, currPassword)) {
+        cout << "Invalid username or password!\nTry again later\n";
+        return false;
+    }
+
+    string newUsername;
+
+    cout << "Enter newUsername : ";
+    cin >> newUsername;
+
+    auth.changeUsername(roll, newUsername);
+    cout << "Username updated successfully!\n";
+    cout << "Please log in again!\n";
+
+    return true;
+
+}
+
+
+
+
+
+
+bool StudentManager :: changePassword(string roll) {
+
+    string currUsername;
+    string currPassword;
+
+    cout << "Enter current username : ";
+    cin >> currUsername;
+
+    cout << "Enter current password : ";
+    cin >> currPassword;
+
+    if (!auth.verifyCredentials(roll, currUsername, currPassword)) {
+        cout << "Invalid username or password!\nTry again later\n";
+        return false;
+    }
+
+    string newPassword;
+    string renewPassword;
+
+    cout << "Enter new Password : ";
+    cin >> newPassword;
+
+    cout << "Enter new password again : ";
+    cin >> renewPassword;
+
+    if (newPassword != renewPassword) {
+        cout << "Password Mismatched!\n";
+        return false;
+    }
+
+    auth.changePassword(roll, newPassword);
+    cout << "Password updated successfully!\n";
+    cout << "Please log in again!\n";
+
+    return true;
+
 }
