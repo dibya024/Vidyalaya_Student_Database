@@ -156,15 +156,16 @@ int main() {
 
             else if (role == "admin"){
 
-
                 cout << "1. Add Student\n";
                 cout << "2. View Students\n";
                 cout << "3. Search Student\n";
                 cout << "4. Delete Student\n";
                 cout << "5. Update Student\n";
                 cout << "6. Show Statistics\n";
-                cout << "7. LogOut\n";
-
+                cout << "7. View Activity logs.\n";
+                cout << "8. Export Students data to CSV\n";
+                cout << "9. Show Leaderboard!\n";
+                cout << "10. LogOut\n";
         
                 cout << "Enter the choice number : ";
                 if (!(cin >> choice)) {
@@ -203,6 +204,18 @@ int main() {
                         break;
 
                     case 7:
+                        manager.viewActivityLogs();
+                        break;
+
+                    case 8:
+                        manager.exportToCsv();
+                        break;
+
+                    case 9:
+                        manager.showLeaderboard();
+                        break;
+
+                    case 10:
                         cout << "\n...Thank You...\n";
                         loggedIn = false;
                         break;

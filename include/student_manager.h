@@ -31,6 +31,11 @@ class StudentManager {
 
         bool changeUsername(std::string roll);
         bool changePassword(std::string roll);
+
+        void viewActivityLogs();
+
+        void exportToCsv();
+        void showLeaderboard();
         
 };
 

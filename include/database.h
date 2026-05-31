@@ -42,6 +42,12 @@ class Database {
         int getBranchRank(std::string roll);
         int getOverallRank(std::string roll);
 
+        void viewStudentProfile(std::string roll);
+        void viewStudentResult(std::string roll);
+
+        void exportToCSV();
+        void Leaderboard();
+
 };
 
 #endif

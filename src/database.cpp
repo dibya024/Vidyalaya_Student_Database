@@ -1,6 +1,7 @@
 #include <iostream>
 #include "database.h"
 #include <iomanip>
+#include <fstream>
 
 
 using namespace std;
@@ -83,9 +84,9 @@ bool Database :: addStudent(const Student& s) {
         return false;
     }
 
-    sqlite3_bind_text(stmt, 1, s.getRoll().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 2, s.getName().c_str(), -1, SQLITE_STATIC);
-    sqlite3_bind_text(stmt, 3, s.getBranch().c_str(), -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 1, s.getRoll().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 2, s.getName().c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 3, s.getBranch().c_str(), -1, SQLITE_TRANSIENT);
 
     sqlite3_bind_int(stmt, 4, s.getRank());
     sqlite3_bind_int(stmt, 5, s.getAge());
@@ -564,4 +565,160 @@ int Database :: getBranchRank(string roll) {
     sqlite3_finalize(stmt);
     return rank;
     
+}
+
+
+
+
+
+void Database :: viewStudentProfile(string roll) {
+
+    string sql= "SELECT roll_no, name, branch, rank, age FROM students WHERE roll_no = ?;";
+
+     sqlite3_stmt* stmt;
+
+    int prepare = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+
+    if(prepare != SQLITE_OK) {
+
+        cout << "SQL Prepare Failed!\n";
+        return;
+    }
+
+    sqlite3_bind_text(stmt, 1, roll.c_str(), -1, SQLITE_STATIC);
+
+    int step = sqlite3_step(stmt);
+
+    if(step == SQLITE_ROW) {
+
+        cout << "\n========== PROFILE ==========\n";
+
+        cout << "Roll No: " << sqlite3_column_text(stmt, 0) << endl;
+        cout << "Name: " << sqlite3_column_text(stmt, 1) << endl;
+        cout << "Branch: " << sqlite3_column_text(stmt, 2) << endl;
+
+        cout << "Rank: " << sqlite3_column_int(stmt, 3) << endl;
+        cout << "Age: " << sqlite3_column_int(stmt, 4) << endl;
+
+        cout << "\n=============================\n";
+
+    }
+
+    else {
+        cout << "Student not found!\n";
+    }
+
+    sqlite3_finalize(stmt);
+
+}
+
+
+
+
+
+
+void Database :: viewStudentResult(string roll) {
+
+    string sql= "SELECT sgpa, cgpa FROM students WHERE roll_no = ?;";
+
+     sqlite3_stmt* stmt;
+
+    int prepare = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+
+    if(prepare != SQLITE_OK) {
+
+        cout << "SQL Prepare Failed!\n";
+        return;
+    }
+
+    sqlite3_bind_text(stmt, 1, roll.c_str(), -1, SQLITE_STATIC);
+
+    int step = sqlite3_step(stmt);
+
+    if(step == SQLITE_ROW) {
+
+        cout << "SGPA: " << sqlite3_column_double(stmt, 0) << endl;
+        cout << "CGPA: " << sqlite3_column_double(stmt, 1) << endl;
+
+        
+    }
+
+    else {
+        cout << "Student not found!\n";
+    }
+
+    sqlite3_finalize(stmt);
+
+}
+
+
+
+
+void Database :: exportToCSV() {
+
+    ofstream file("exports/students.csv");
+
+    if (!file.is_open()) {
+        cout << "Failed to create CSV file\n!";
+        return;
+    }
+
+    file << "Roll No.,Name,Branch,Rank,Age,SGPA,CGPA\n";
+
+    string sql = "SELECT * FROM students;";
+    sqlite3_stmt* stmt;
+
+    int prepare= sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+    if (prepare != SQLITE_OK) {
+        cout << "SQL prepare failed!\n";
+        file.close();
+        return;
+    }
+
+    while (sqlite3_step(stmt) == SQLITE_ROW) {
+        file << reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0)) << ","
+             << reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1)) << ","
+             << reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2)) << ","
+             << sqlite3_column_int(stmt, 3) << ","
+             << sqlite3_column_int(stmt, 4) << ","
+             << sqlite3_column_double(stmt, 5) << ","
+             << sqlite3_column_double(stmt, 6) << "\n";
+    }
+
+    sqlite3_finalize(stmt);
+    file.close();
+    cout << "CSV exported successfully!\n";
+}
+
+
+
+
+void Database :: Leaderboard() {
+
+    string sql= "SELECT name, roll_no, branch, cgpa FROM students ORDER BY cgpa DESC LIMIT 5;";
+    sqlite3_stmt* stmt;
+
+    int prepare = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+
+    if (prepare != SQLITE_OK) {
+        cout << "SQL prepare failed!\n";
+        return;
+    }
+
+    cout << "\n========== LEADERBOARD ==========\n";
+    int pos= 1;
+
+    while(sqlite3_step(stmt) == SQLITE_ROW) {
+
+        string name= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+        string roll= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        string branch= reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+        double cgpa= sqlite3_column_double(stmt,3);
+
+        cout << pos << ". " << name << " (" << roll << ") " << " Branch : " << branch << " CGPA : " << fixed << setprecision(2) << cgpa << endl;
+        pos++;
+
+    }
+    cout << "\n================================================\n";
+    sqlite3_finalize(stmt);
 }

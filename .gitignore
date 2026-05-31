@@ -2,4 +2,6 @@ build/
 *.o
 *.exe
 *.db
+logs/
+exports/
 .vscode/

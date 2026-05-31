@@ -1,5 +1,6 @@
 #include <iostream>
 #include "student_manager.h"
+#include "activity.h"
 
 using namespace std;
 
@@ -55,7 +56,6 @@ bool StudentManager :: addStudent() {
 
     cout << "Enter Branch/Specialization : ";
     getline(cin >> ws, branch);
-    cout << "DEBUG Branch = [" << branch << "]\n";
 
     cout << "Enter class rank :";
     cin >> rank;
@@ -109,6 +109,8 @@ bool StudentManager :: addStudent() {
         return false;
     }
 
+    Activity :: log("Admin added Student "+ roll_no);
+
     cout << "New student details added successfully!\n";
     return true;
 
@@ -136,10 +138,11 @@ void StudentManager :: deleteStudent() {
     cout << "Enter the roll_no you want to delete : ";
     cin >> sroll;
 
-    auth.deleteStudentAuthByRoll(sroll);
-    db.deleteByRoll(sroll);
+    if (auth.deleteStudentAuthByRoll(sroll)) {
 
-
+        db.deleteByRoll(sroll);
+        Activity :: log("Admin deleted Student " + sroll);
+    }
 
 }
 
@@ -181,6 +184,7 @@ void StudentManager :: searchStudent() {
         return;
     }
 
+    Activity :: log ("Admin searched Student " + sroll);
 
 }
 
@@ -265,6 +269,8 @@ void StudentManager :: updateStudent() {
     }
     db.updateStudent(sroll, column, value);
 
+    Activity :: log("Admin updated Student " + sroll);
+
 }
 
 
@@ -281,7 +287,7 @@ void StudentManager :: showStatistics() {
 
 void StudentManager :: viewMyData(string roll) {
 
-    db.searchByRoll(roll);
+    db.viewStudentProfile(roll);
     
 }
 
@@ -291,10 +297,12 @@ void StudentManager :: viewMyResult(string roll){
 
     cout << "\n========== RESULT ==========\n";
 
-    cout << "Branch Rank  : " << db.getBranchRank(roll) << endl;
+    db.viewStudentResult(roll);
+
+    cout << "\nBranch Rank  : " << db.getBranchRank(roll) << endl;
     cout << "Overall Rank : " << db.getOverallRank(roll) << endl; 
     
-    cout << "============================\n";
+    cout << "\n============================\n";
 
 }
 
@@ -325,6 +333,8 @@ bool StudentManager :: changeUsername(string roll) {
     auth.changeUsername(roll, newUsername);
     cout << "Username updated successfully!\n";
     cout << "Please log in again!\n";
+
+    Activity :: log ("Student "+ roll + " changed own username.");
 
     return true;
 
@@ -369,6 +379,38 @@ bool StudentManager :: changePassword(string roll) {
     cout << "Password updated successfully!\n";
     cout << "Please log in again!\n";
 
+    Activity :: log ("Student "+ roll + " changed own password.");
+
     return true;
 
+}
+
+
+
+
+void StudentManager :: viewActivityLogs() {
+
+    ifstream file("logs/activity.log");
+    string line;
+
+    while (getline(file, line)) {
+        cout << line << endl;
+    }
+}
+
+
+
+
+void StudentManager :: exportToCsv() {
+
+    db.exportToCSV();
+    Activity::log("Admin exported database to CSV");
+}
+
+
+
+
+void StudentManager :: showLeaderboard() {
+
+    db.Leaderboard();
 }
