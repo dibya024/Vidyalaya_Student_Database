@@ -116,7 +116,8 @@ int main() {
                 cout << "1. View Students\n";
                 cout << "2. Search Students\n";
                 cout << "3. Update Student\n";
-                cout << "4. LogOut\n";
+                cout << "4. Add student result.\n";
+                cout << "5. LogOut\n";
 
                 cout << "Enter option here : ";
             
@@ -144,6 +145,10 @@ int main() {
                         break;
 
                     case 4:
+                        manager.addStudentResult();
+                        break;
+
+                    case 5:
                         loggedIn = false;
                         cout << "\n...Thank You...\n";
                         break;
@@ -164,8 +169,9 @@ int main() {
                 cout << "6. Show Statistics\n";
                 cout << "7. View Activity logs.\n";
                 cout << "8. Export Students data to CSV\n";
-                cout << "9. Show Leaderboard!\n";
-                cout << "10. LogOut\n";
+                cout << "9. Edit student result.\n";
+                cout << "10. Show Leaderboard!\n";
+                cout << "11. LogOut\n";
         
                 cout << "Enter the choice number : ";
                 if (!(cin >> choice)) {
@@ -212,10 +218,14 @@ int main() {
                         break;
 
                     case 9:
-                        manager.showLeaderboard();
+                        manager.updateStudentResult();
                         break;
 
                     case 10:
+                        manager.showLeaderboard();
+                        break;
+
+                    case 11:
                         cout << "\n...Thank You...\n";
                         loggedIn = false;
                         break;

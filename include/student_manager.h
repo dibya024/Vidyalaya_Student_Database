@@ -36,6 +36,9 @@ class StudentManager {
 
         void exportToCsv();
         void showLeaderboard();
+
+        void addStudentResult();
+        void updateStudentResult();
         
 };
 

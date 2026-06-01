@@ -48,6 +48,19 @@ class Database {
         void exportToCSV();
         void Leaderboard();
 
+        void createResultTable();
+        bool addResult(std::string roll, int semester, std::string subject, int credits, std::string grade);
+        bool updateResult(int resultId, std::string newGrade);
+
+        int gradeToPoints(std::string grade);
+
+        double calculateSGPA(std::string roll, int semester);
+        double updateStudentSGPA(std::string roll, double sgpa);
+
+        double calculateCGPA(std::string roll, int semester);
+        double updateStudentCGPA(std::string roll, double cgpa);
+
+
 };
 
 #endif

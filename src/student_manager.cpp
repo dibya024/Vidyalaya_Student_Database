@@ -414,3 +414,68 @@ void StudentManager :: showLeaderboard() {
 
     db.Leaderboard();
 }
+
+
+
+
+void StudentManager :: addStudentResult() {
+    
+    string roll;
+    string subject;
+    string grade;
+
+    int semester;
+    int credits;
+
+    cout << "Enter roll no : ";
+    cin >> roll;
+
+    cout << "Enter semester : ";
+    cin >> semester;
+
+    cin.ignore(1000, '\n');
+    cout << "Enter subject name : ";
+    getline(cin, subject);
+
+    cout << "Enter the credits : ";
+    cin >> credits;
+
+    cout << "Enter Grade (O /A /B /C /D /P /F) : ";
+    cin >> grade;
+
+    bool success = db.addResult(roll, semester, subject, credits, grade);
+    if (!success){
+        cout << "Result insertion failed!\n";
+        return;
+    }
+
+    double sgpa = db.calculateSGPA(roll, semester);
+    db.updateStudentSGPA(roll, sgpa);
+
+    double cgpa = db.calculateCGPA(roll, semester);
+    db.updateStudentCGPA(roll, cgpa);
+    
+    cout << "Result added successfully!\n";
+    cout << "Updated SGPA : " << sgpa << endl;
+    cout << "Updated CGPA : " << cgpa << endl;
+
+}
+
+
+
+
+void StudentManager :: updateStudentResult() {
+
+    int resultId;
+    string newGrade;
+
+    cout << "Enter result id : ";
+    cin >> resultId;
+
+    cout << "Enter new grade : ";
+    cin >> newGrade;
+
+    if(db.updateResult(resultId, newGrade)){
+        Activity :: log("Admin updated result ID " + to_string(resultId));
+    }
+}

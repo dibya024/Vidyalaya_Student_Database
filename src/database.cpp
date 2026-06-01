@@ -20,6 +20,8 @@ Database :: Database() {
     }
 
     createTable();
+    createResultTable();
+
     loadCache();
 
 }
@@ -29,6 +31,7 @@ Database :: ~Database() {
     sqlite3_close(db);
     cout << "Database connection closed.\n";
 }
+
 
 
 void Database :: createTable(){
@@ -721,4 +724,226 @@ void Database :: Leaderboard() {
     }
     cout << "\n================================================\n";
     sqlite3_finalize(stmt);
+}
+
+
+
+
+void Database :: createResultTable() {
+
+    string sql = "CREATE TABLE IF NOT EXISTS results ("
+                 "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                 "roll_no TEXT NOT NULL,"
+                 "semester INTEGER NOT NULL,"
+                 "subject TEXT NOT NULL,"
+                 "credits INTEGER NOT NULL,"
+                 "grade TEXT NOT NULL"
+                 ");";
+
+    char* errMsg = nullptr;
+
+    int result = sqlite3_exec(db, sql.c_str(), nullptr, nullptr, &errMsg);
+    if (result != SQLITE_OK) {
+        cout << "Result table creation failed!\n";
+        sqlite3_free(errMsg);
+    }
+    else
+    {
+        cout << "Result table created successfully!\n";
+    }
+
+}
+
+
+
+
+bool Database :: addResult(string roll, int semester, string subject, int credits, string grade) {
+
+    string sql = "INSERT INTO results "
+                 "(roll_no, semester, subject, credits, grade) "
+                 "VALUES (?, ?, ?, ?, ?);";
+
+    sqlite3_stmt* stmt;
+
+    int prepare = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+    if (prepare != SQLITE_OK) {
+        cout << "SQL Prepare Failed!\n";
+        return false;
+    }
+
+    sqlite3_bind_text(stmt, 1, roll.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 2, semester);
+    sqlite3_bind_text(stmt, 3, subject.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 4, credits);
+    sqlite3_bind_text(stmt, 5, grade.c_str(), -1, SQLITE_TRANSIENT);
+
+    int step= sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+
+    if (step != SQLITE_DONE) {
+        cout << "Result insertion failed!\n";
+        return false;
+    }
+    else{
+        cout << "Result added successfully!\n";
+        return true;
+    }
+
+
+}
+
+
+
+
+bool Database :: updateResult(int resultId, string newGrade){
+
+    string sql = "UPDATE results SET grade = ? WHERE id = ?;";
+
+    sqlite3_stmt* stmt;
+
+    int prepare = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+    if (prepare != SQLITE_OK) {
+        cout << "SQL prepare failed!\n";
+        return false;
+    }
+
+    sqlite3_bind_text(stmt, 1, newGrade.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 2, resultId);
+
+    int step= sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+
+    if (step != SQLITE_DONE){
+        cout << "Result updatation failed!\n";
+        return false;
+    }
+    
+    if (sqlite3_changes(db) == 0) {
+        cout << "Result ID not found!\n";
+        return false;
+    }
+    cout << "Result updated successfully!\n";
+    return true;
+
+}
+
+
+
+
+int Database :: gradeToPoints(string grade){
+
+    if (grade == "O")  return 10;
+    if (grade == "A+") return 9;
+    if (grade == "A")  return 8;
+    if (grade == "B+") return 7;
+    if (grade == "B")  return 6;
+    if (grade == "C")  return 5;
+
+    return 0;
+
+}
+
+
+
+double Database :: calculateSGPA(string roll, int semester){
+
+    string sql = "SELECT credits, grade FROM results WHERE roll_no = ? AND semester = ?;";
+
+    sqlite3_stmt* stmt;
+    sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+
+    sqlite3_bind_text(stmt, 1, roll.c_str(), -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 2, semester);
+
+    int totalCredits= 0;
+    double weightedSum = 0;
+
+    while (sqlite3_step(stmt) == SQLITE_ROW){
+
+        int credits = sqlite3_column_int(stmt, 0);
+        string grade = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+        
+        int points = gradeToPoints(grade);
+
+        weightedSum += points * credits;
+        totalCredits += credits;
+
+    }
+    sqlite3_finalize(stmt);
+    if (totalCredits == 0){
+        return 0;
+    }
+
+    return weightedSum /
+           totalCredits;
+
+}
+
+
+
+double Database :: updateStudentSGPA(string roll, double sgpa){
+
+    string sql = "UPDATE students SET sgpa = ? WHERE roll_no = ?;";
+
+    sqlite3_stmt* stmt;
+    int prepare = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+
+    if (prepare != SQLITE_OK){
+        cout << "SQL prepare failed!\n";
+        return false;
+    }
+
+    sqlite3_bind_double(stmt, 1, sgpa);
+
+    sqlite3_bind_text(stmt, 2, roll.c_str(), -1, SQLITE_TRANSIENT);
+    int step= sqlite3_step(stmt);
+
+    sqlite3_finalize(stmt);
+    return step == SQLITE_DONE;
+
+}
+
+
+
+double Database :: calculateCGPA(string roll, int semester) {
+
+    string sql = "SELECT sgpa FROM students WHERE roll_no = ?;";
+    sqlite3_stmt* stmt;
+
+    int prepare = sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+    if (prepare != SQLITE_OK){
+        cout << "SQL prepare failed!\n";
+        return false;
+    }
+    sqlite3_bind_text(stmt, 1, roll.c_str(), -1, SQLITE_TRANSIENT);
+
+    double cgpa= 0;
+    if (sqlite3_step(stmt) == SQLITE_ROW){
+        cgpa= sqlite3_column_double(stmt, 0);
+    }
+    sqlite3_finalize(stmt);
+
+    return cgpa;
+
+}
+
+
+
+double Database::updateStudentCGPA(string roll, double cgpa) {
+
+    string sql = "UPDATE students SET cgpa = ? WHERE roll_no = ?;";
+    sqlite3_stmt* stmt;
+
+    int prepare= sqlite3_prepare_v2(db, sql.c_str(), -1, &stmt, nullptr);
+    if (prepare != SQLITE_OK){
+        cout << "SQLite prepare failed\n";
+        return false;
+    }
+    sqlite3_bind_double(stmt, 1, cgpa);
+    sqlite3_bind_text(stmt, 2, roll.c_str(), -1, SQLITE_TRANSIENT);
+
+    int step = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+
+    return step == SQLITE_DONE;
 }
