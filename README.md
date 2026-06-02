@@ -238,6 +238,6 @@ g++ src/main.cpp src/student.cpp src/student_manager.cpp src/database.cpp src/au
 **Dibyaranjan Sahoo**
 
 Mechanical Engineering Undergraduate, 
-Minor Degree in Computer Science & Engineering
+Minor Degree in Computer Science & Engineering, NIT Rourkela
 
-GitHub: https://github.com/dibya024
+GitHub: [dibya024](https://github.com/dibya024)
