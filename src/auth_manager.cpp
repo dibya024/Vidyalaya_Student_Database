@@ -27,12 +27,12 @@ void AuthManager::connectDatabase() {
 
     int exit = sqlite3_open("data/auth.db", &auth_db);        //SQLite returns 0(success) and non-zero(failure).
 
-    if(exit) {
-        cout << "Auth Database Connection Failed!\n";
-    }
-    else {
-        cout << "Auth Database Connected\n";
-    }
+    // if(exit) {
+    //     cout << "Auth Database Connection Failed!\n";
+    // }
+    // else {
+    //     cout << "Auth Database Connected\n";
+    // }
 
 }
 
@@ -56,10 +56,10 @@ void AuthManager::createStudentAuthTable() {
         cout << "Table Creation Failed : "<< errMsg << endl;
         sqlite3_free(errMsg);
     }
-    else 
-    {
-        cout << "Student Auth Table Ready\n";
-    }
+    // else 
+    // {
+    //     cout << "Student Auth Table Ready\n";
+    // }
 
 }
 
@@ -77,7 +77,6 @@ void AuthManager::loadJsonUsers() {
     }
 
     file >> users_json;
-    cout << "JSON Users Loaded\n";
 
 }
 
@@ -113,7 +112,6 @@ void AuthManager::loadStudentCache() {
     }
 
     sqlite3_finalize(stmt);
-    cout << "Student Cache Loaded\n";
 
 }
 

@@ -10,8 +10,6 @@ using namespace std;
 int main() {
 
     cout << "WELCOME TO VIDYALAYA\n";
-    cout << "Enter user id(roll_no) and password.\nNot a student ? Enter Name and password!\n";
-
 
     AuthManager auth;
     StudentManager manager(auth);
@@ -38,8 +36,6 @@ int main() {
         cout << "\nLogin Successful\n";
         cout << "Role : " << role << endl;
 
-        cout << "Program started\n";
-    
         bool loggedIn = true;
 
 

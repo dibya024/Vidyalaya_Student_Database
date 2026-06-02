@@ -8,16 +8,14 @@ using namespace std;
 
 Database :: Database() {
 
-    cout << "Database constructor started\n";
-    
     int exit = sqlite3_open("data/student.db", &db);
 
     if (exit) {
         cout << "Database connection failed!\n";
     }
-    else{
-        cout << "Connected to SQLite database!\n";
-    }
+    // else{
+    //     cout << "Connected to SQLite database!\n";
+    // }
 
     createTable();
     createResultTable();
@@ -56,17 +54,11 @@ void Database :: createTable(){
         sqlite3_free(errMsg);
 
     }
-    else{
-        cout << "Table created sucessfully!\n";
-    }
-
 
     string nameIndex= "CREATE INDEX IF NOT EXISTS idx_name "
                       "ON students(name);";
 
     sqlite3_exec(db, nameIndex.c_str(), NULL, NULL, &errMsg);
-
-    cout << "Indexes created successfully!\n";
 
 }
 
@@ -122,14 +114,14 @@ void Database :: viewStudents() {
 
     cout << left 
          << setw(15) << "Roll No."
-         << setw(20) << "Name"
-         << setw(15) << "Branch"
+         << setw(30) << "Name"
+         << setw(25) << "Branch"
          << setw(8) << "Rank"
          << setw(8) << "Age"
          << setw(10) << "SGPA"
          << setw(10) << "CGPA" << endl;
 
-    cout << string(86, '-') << endl;
+    cout << string(130, '-') << endl;
 
     auto callback = [](void*, int argc, char** argv, char** colName) {
 
@@ -138,8 +130,8 @@ void Database :: viewStudents() {
 
         cout << left
             << setw(15) << (argv[0] ? argv[0] : "NULL")
-            << setw(20) << (argv[1] ? argv[1] : "NULL")
-            << setw(15) << (argv[2] ? argv[2] : "NULL")
+            << setw(30) << (argv[1] ? argv[1] : "NULL")
+            << setw(25) << (argv[2] ? argv[2] : "NULL")
             << setw(8)  << (argv[3] ? argv[3] : "NULL")
             << setw(8)  << (argv[4] ? argv[4] : "NULL")
             << setw(10) << fixed << setprecision(2) << sgpa
@@ -413,7 +405,6 @@ void Database :: loadCache() {
     }
 
     sqlite3_finalize(stmt);
-    cout << "Student cache loaded successfully!\n";
 
 }
 
@@ -746,10 +737,6 @@ void Database :: createResultTable() {
     if (result != SQLITE_OK) {
         cout << "Result table creation failed!\n";
         sqlite3_free(errMsg);
-    }
-    else
-    {
-        cout << "Result table created successfully!\n";
     }
 
 }
