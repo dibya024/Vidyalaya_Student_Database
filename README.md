@@ -237,7 +237,7 @@ g++ src/main.cpp src/student.cpp src/student_manager.cpp src/database.cpp src/au
 
 **Dibyaranjan Sahoo**
 
-Mechanical Engineering Undergraduate
+Mechanical Engineering Undergraduate, 
 Minor Degree in Computer Science & Engineering
 
-GitHub: https://github.com/<dibya024>
+GitHub: https://github.com/dibya024
